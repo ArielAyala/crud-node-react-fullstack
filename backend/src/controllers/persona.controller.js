@@ -1,40 +1,45 @@
-import { pool } from "../db.js";
+import boom from "@hapi/boom";
+
+import personaService from "../services/persona.service.js";
+import handleError from "../utils/handleError.js";
 
 export const getPersonaById = async (req, res) => {
   try {
-    const [rows] = await pool.query("select * from persona where id = ?", [
-      req.params.id,
-    ]);
-    if (rows.length <= 0)
-      return res.status(404).json({
-        messaje: "Persona no encontrada",
-      });
-    res.json(rows[0]);
+    const persona = await personaService.findById(req.params.id);
+
+    if (!persona) {
+      throw boom.notFound("Persona no encontrada");
+    }
+
+    res.json(persona);
   } catch (error) {
-    return res.status(500).json({ message: "Algo salió mal" });
+    handleError(error, res);
   }
 };
 
 export const getPersonas = async (req, res) => {
   try {
-    const [rows] = await pool.query("select * from persona");
-    res.json(rows);
+    const personas = await personaService.getPersonas();
+    res.json(personas);
   } catch (error) {
-    return res.status(500).json({ message: "Algo salió mal" });
+    handleError(error, res);
   }
 };
 
 export const createPersona = async (req, res) => {
   try {
     const { nombre, documento, correo, telefono } = req.body;
-    const [rows] = await pool.query(
-      "INSERT INTO persona (`nombrecompleto`,`nrodocumento`,`correo`,`telefono`) VALUES (?,?,?,?)",
-      [nombre, documento, correo, telefono]
-    );
 
-    res.send({ id: rows.insertId, nombre, documento, correo, telefono });
+    const persona = await personaService.createPersona({
+      nombre,
+      documento,
+      correo,
+      telefono,
+    });
+
+    res.status(201).json(persona);
   } catch (error) {
-    return res.status(500).json({ message: "Algo salió mal" });
+    handleError(error, res);
   }
 };
 
@@ -43,30 +48,35 @@ export const updatePersona = async (req, res) => {
     const { id } = req.params;
     const { nombre, documento, correo, telefono } = req.body;
 
-    const [result] = await pool.query(
-      "UPDATE persona SET nombrecompleto = IFNULL(?, nombrecompleto), nrodocumento = IFNULL(?, nrodocumento), correo = IFNULL(?, correo), telefono = IFNULL(?, telefono) WHERE id = ?",
-      [nombre, documento, correo, telefono, id]
-    );
+    const persona = await personaService.updatePersona(id, {
+      nombre,
+      documento,
+      correo,
+      telefono,
+    });
 
-    if (result.affectedRows <= 0)
-      return res.status(404).json({
-        message: "Persona no encontrada",
-      });
+    if (!persona) {
+      return res.status(404).json({ message: "Persona no encontrada" });
+    }
 
-    res.sendStatus(204);
+    res.json(persona);
   } catch (error) {
-    return res.status(500).json({ message: "Algo salió mal" });
+    handleError(error, res);
   }
 };
 
 export const deletePersona = async (req, res) => {
-  const [result] = await pool.query("DELETE FROM persona WHERE id = ?", [
-    req.params.id,
-  ]);
+  try {
+    const { id } = req.params;
 
-  if (result.affectedRows <= 0)
-    return res.status(404).json({
-      message: "Persona no encontrada",
-    });
-  res.sendStatus(204);
+    const deletedPersona = await personaService.deletePersona(id);
+
+    if (!deletedPersona) {
+      return res.status(404).json({ message: "Persona no encontrada" });
+    }
+
+    res.json(deletedPersona);
+  } catch (error) {
+    handleError(error, res);
+  }
 };
