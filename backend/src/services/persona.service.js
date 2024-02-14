@@ -47,21 +47,6 @@ class PersonaService {
     };
   }
 
-  // async update(id, persona) {
-  //   const { nombre, email, password } = persona;
-
-  //   await pool.query(
-  //     "UPDATE persona SET nombre = ?, email = ?, password = ? WHERE id = ?",
-  //     [nombre, email, password, id]
-  //   );
-
-  //   return {
-  //     id,
-  //     nombre,
-  //     email,
-  //   };
-  // }
-
   async updatePersona(id, persona) {
     const { nombre, documento, correo, telefono } = persona;
 
@@ -82,14 +67,6 @@ class PersonaService {
       telefono,
     };
   }
-
-  // async delete(id) {
-  //   await pool.query("DELETE FROM persona WHERE id = ?", [id]);
-
-  //   return {
-  //     id,
-  //   };
-  // }
 
   async deletePersona(id) {
     const [result] = await pool.query("DELETE FROM persona WHERE id = ?", [id]);
