@@ -1,4 +1,7 @@
+import Joi from "joi";
+import boom from "@hapi/boom";
 import { pool } from "../db.js";
+//import JoiValidationError from "../utils/joiValidationError.js";
 
 class PersonaService {
   async getPersonas() {
@@ -31,6 +34,19 @@ class PersonaService {
   // }
 
   async createPersona(persona) {
+    const schema = Joi.object({
+      nombre: Joi.string().min(3).max(255).required(),
+      documento: Joi.string().min(5).max(20).required(),
+      telefono: Joi.string().min(0).max(20).required(),
+    });
+
+    const { error } = schema.validate(persona);
+
+    if (error) {
+      //throw new JoiValidationError(error.details[0].message);
+      throw boom.badRequest(error.details[0].message);
+    }
+
     const { nombre, documento, correo, telefono } = persona;
 
     const [result] = await pool.query(
