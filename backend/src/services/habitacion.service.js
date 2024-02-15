@@ -1,7 +1,7 @@
 import Joi from "joi";
 import boom from "@hapi/boom";
 import { pool } from "../db.js";
-import JoiValidationError from "../utils/joiValidationError.js";
+//import JoiValidationError from "../utils/joiValidationError.js";
 
 class HabitacionService {
   async getHabitaciones() {
