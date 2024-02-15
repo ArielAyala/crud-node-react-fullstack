@@ -5,7 +5,7 @@ import handleError from "../utils/handleError.js";
 
 export const getPersonaById = async (req, res) => {
   try {
-    const persona = await personaService.findById(req.params.id);
+    const persona = await personaService.getPersonaById(req.params.id);
 
     if (!persona) {
       throw boom.notFound("Persona no encontrada");

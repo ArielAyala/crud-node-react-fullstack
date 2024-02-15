@@ -4,11 +4,13 @@ import { pool } from "../db.js";
 //import JoiValidationError from "../utils/joiValidationError.js";
 
 class PersonaService {
+
   async getPersonas() {
     const [rows] = await pool.query("SELECT * FROM persona");
     return rows;
   }
-  async findById(id) {
+
+  async getPersonaById(id) {
     const [rows] = await pool.query("SELECT * FROM persona WHERE id = ?", [id]);
 
     if (rows.length <= 0) {

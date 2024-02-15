@@ -8,7 +8,7 @@ class HabitacionService {
     const [rows] = await pool.query("SELECT * FROM habitacion");
     return rows;
   }
-  async findById(id) {
+  async getHabitacionById(id) {
     const [rows] = await pool.query("SELECT * FROM habitacion WHERE id = ?", [
       id,
     ]);

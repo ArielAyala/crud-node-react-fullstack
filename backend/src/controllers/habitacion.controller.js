@@ -5,7 +5,7 @@ import handleError from "../utils/handleError.js";
 
 export const geHabitacionById = async (req, res) => {
   try {
-    const habitacion = await habitacionService.findById(req.params.id);
+    const habitacion = await habitacionService.getHabitacionById(req.params.id);
 
     if (!habitacion) {
       throw boom.notFound("Habitación no encontrada");
