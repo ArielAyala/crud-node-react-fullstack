@@ -112,6 +112,44 @@ class HabitacionService {
       id,
     };
   }
+
+  async getHabitacionesDisponibles(fechaEntrada, fechaSalida) {
+    const query = `SELECT h.*
+                    FROM habitacion h
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM reserva r
+                        WHERE h.id = r.habitacionid
+                          AND (
+                            (DATE(?) BETWEEN DATE(r.fechaentrada) AND DATE(r.fechasalida))
+                            OR (DATE(?) BETWEEN DATE(r.fechaentrada) AND DATE(r.fechasalida))
+                            OR (DATE(r.fechaentrada) BETWEEN DATE(?) AND DATE(?))
+                            OR (DATE(r.fechasalida) BETWEEN DATE(?) AND DATE(?))
+                          )
+                    );`;
+
+    // prettier-ignore
+    const [rows] = await pool.query(query, [fechaEntrada,fechaSalida,fechaEntrada,fechaSalida,fechaEntrada,fechaSalida]);
+    return rows;
+  }
+
+  async isHabitacionDisponible(habitacionId, fechaEntrada, fechaSalida) {
+    const query = `SELECT 1
+                    FROM reserva r
+                    WHERE r.habitacionid = ?
+                      AND (
+                        (DATE(?) BETWEEN DATE(r.fechaentrada) AND DATE(r.fechasalida))
+                        OR (DATE(?) BETWEEN DATE(r.fechaentrada) AND DATE(r.fechasalida))
+                        OR (DATE(r.fechaentrada) BETWEEN DATE(?) AND DATE(?))
+                        OR (DATE(r.fechasalida) BETWEEN DATE(?) AND DATE(?))
+                      )
+                    LIMIT 1;`;
+
+    // prettier-ignore
+    const result = await pool.query(query, [habitacionId,fechaEntrada,fechaSalida,fechaEntrada,fechaSalida,fechaEntrada,fechaSalida]);
+
+    return result.length === 0;
+  }
 }
 
 export default new HabitacionService();

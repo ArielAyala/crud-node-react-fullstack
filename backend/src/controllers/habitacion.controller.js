@@ -26,6 +26,17 @@ export const getHabitaciones = async (req, res) => {
   }
 };
 
+export const getHabitacionesDisponiblesByDateRange = async (req, res) => {
+  try {
+    const { fechaEntrada, fechaSalida } = req.params;
+    // prettier-ignore
+    const habitaciones = await habitacionService.getHabitacionesDisponibles(fechaEntrada,fechaSalida);
+    res.json(habitaciones);
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
 export const createHabitacion = async (req, res) => {
   try {
     const habitacion = await habitacionService.createHabitacion(req.body);
