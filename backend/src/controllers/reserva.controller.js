@@ -35,3 +35,19 @@ export const createReseva = async (req, res) => {
     handleError(error, res);
   }
 };
+
+export const deleteReserva = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedReserva = await reservaService.deleteReserva(id);
+
+    if (!deletedReserva) {
+      return res.status(404).json({ message: "Reserva no encontrada" });
+    }
+
+    res.json(deletedReserva);
+  } catch (error) {
+    handleError(error, res);
+  }
+};

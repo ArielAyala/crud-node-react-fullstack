@@ -72,6 +72,18 @@ class ReservaService {
     const days = differenceInDays(fechaSalida, fechaEntrada);
     return days * PRICE_PER_DAY;
   }
+
+  async deleteReserva(id) {
+    const [result] = await pool.query("DELETE FROM reserva WHERE id = ?", [id]);
+
+    if (result.affectedRows <= 0) {
+      return null;
+    }
+
+    return {
+      id,
+    };
+  }
 }
 
 export default new ReservaService();
