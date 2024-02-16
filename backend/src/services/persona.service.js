@@ -40,6 +40,7 @@ class PersonaService {
       nombre: Joi.string().min(3).max(255).required(),
       documento: Joi.string().min(5).max(20).required(),
       telefono: Joi.string().min(0).max(20).required(),
+      correo: Joi.string().min(6)
     });
 
     const { error } = schema.validate(persona);
@@ -66,6 +67,20 @@ class PersonaService {
   }
 
   async updatePersona(id, persona) {
+
+    const schema = Joi.object({
+      nombre: Joi.string().min(3).max(255).required(),
+      documento: Joi.string().min(5).max(20).required(),
+      telefono: Joi.string().min(0).max(20).required(),
+      correo: Joi.string().min(6)
+    });
+
+    const { error } = schema.validate(persona);
+
+    if (error) {
+      //throw new JoiValidationError(error.details[0].message);
+      throw boom.badRequest(error.details[0].message);
+    }
     const { nombre, documento, correo, telefono } = persona;
 
     const [result] = await pool.query(
