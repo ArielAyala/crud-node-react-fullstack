@@ -40,7 +40,7 @@ class PersonaService {
       nombre: Joi.string().min(3).max(255).required(),
       documento: Joi.string().min(5).max(20).required(),
       telefono: Joi.string().min(0).max(20).required(),
-      correo: Joi.string().min(6)
+      correo: Joi.string().allow(null, '')
     });
 
     const { error } = schema.validate(persona);
@@ -72,7 +72,7 @@ class PersonaService {
       nombre: Joi.string().min(3).max(255).required(),
       documento: Joi.string().min(5).max(20).required(),
       telefono: Joi.string().min(0).max(20).required(),
-      correo: Joi.string().min(6)
+      correo: Joi.string().allow(null, '')
     });
 
     const { error } = schema.validate(persona);
