@@ -27,3 +27,18 @@ export const createPersona = async (persona) => {
     throw error;
   }
 };
+
+export const updatePersona = async (id, personaData) => {
+  try {
+    const response = await axios.patch(URL_ENTITY + id, personaData);
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Error updating persona: " + response.statusText);
+    }
+  } catch (error) {
+    console.error("Error updating persona:", error);
+    throw error;
+  }
+};
