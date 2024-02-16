@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+
 import { PORT } from "./config.js";
 
 import personaRoutes from "./routes/persona.routes.js";
@@ -6,6 +8,14 @@ import habitacionRoutes from "./routes/habitacion.routes.js";
 import reservaRoutes from "./routes/reserva.routes.js";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Reemplaza con el origen autorizado (puedes añadir más orígenes separándolos por comas)
+    credentials: true, // Indica si se permiten credenciales (cookies, sesiones)
+  })
+);
+
 app.use(express.json());
 
 
