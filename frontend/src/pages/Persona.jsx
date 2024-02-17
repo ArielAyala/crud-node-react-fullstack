@@ -9,6 +9,8 @@ import { Modal, Button } from "react-bootstrap";
 import { Operation } from "../utils/operations";
 import { showAlert, ALERT_ICON, showConfirDeleteDialog } from "../utils/alert";
 import { useForm } from "react-hook-form";
+import EditButton from "../components/EditButton";
+import DeleteButton from "../components/DeleteButton";
 
 const Persona = () => {
   const [personas, setPersonas] = useState([]);
@@ -145,8 +147,7 @@ const Persona = () => {
                 <td>{persona.telefono}</td>
                 <td>{persona.correo}</td>
                 <td>
-                  <button
-                    className="btn btn-warning"
+                  <EditButton
                     onClick={() =>
                       openModal(
                         Operation.EDIT,
@@ -157,16 +158,9 @@ const Persona = () => {
                         persona.correo
                       )
                     }
-                  >
-                    <i className="fa-solid fa-edit"></i>
-                  </button>
+                  />
                   &nbsp;
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDelete(persona.id)}
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
+                  <DeleteButton onClick={() => handleDelete(persona.id)} />
                 </td>
               </tr>
             ))}

@@ -9,6 +9,8 @@ import { Operation } from "../utils/operations";
 import { showAlert, ALERT_ICON, showConfirDeleteDialog } from "../utils/alert";
 import { useForm } from "react-hook-form";
 import { Modal, Button } from "react-bootstrap";
+import DeleteButton from "../components/DeleteButton";
+import EditButton from "../components/EditButton";
 
 const Habitacion = () => {
   const [habitaciones, setHabitaciones] = useState([]);
@@ -129,7 +131,7 @@ const Habitacion = () => {
   return (
     <>
       <div>
-        <div className="row justify-content-between">
+        <div className="row justify-content-between mb-4">
           <div className="col">
             <h3>Habitaciones</h3>
           </div>
@@ -162,8 +164,7 @@ const Habitacion = () => {
                 <td>{habitacion.tienetelevision ? "Sí" : "No"}</td>
                 <td>{habitacion.tienefrigobar ? "Sí" : "No"}</td>
                 <td>
-                  <button
-                    className="btn btn-warning"
+                  <EditButton
                     onClick={() =>
                       openModal(
                         Operation.EDIT,
@@ -175,16 +176,9 @@ const Habitacion = () => {
                         habitacion.tienefrigobar
                       )
                     }
-                  >
-                    <i className="fa-solid fa-edit"></i>
-                  </button>
+                  />
                   &nbsp;
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDelete(habitacion.id)}
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
+                  <DeleteButton onClick={() => handleDelete(habitacion.id)} />
                 </td>
               </tr>
             ))}
