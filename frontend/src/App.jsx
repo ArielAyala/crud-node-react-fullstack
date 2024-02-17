@@ -1,8 +1,8 @@
 import { BrowserRouter, useRoutes } from "react-router-dom";
 import Layout from "./components/Layout";
-import Persona from "./components/Persona";
-import Habitacion from "./components/Habitacion";
-import Reserva from "./components/Reserva";
+import Persona from "./pages/Persona";
+import Habitacion from "./pages/Habitacion";
+import Reserva from "./pages/Reserva";
 
 const AppRoutes = () => {
   let routes = useRoutes([
