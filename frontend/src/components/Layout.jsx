@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const Layout = ({ children }) => {
   Layout.propTypes = {
-    children: PropTypes.node.isRequired, // PropTypes.node: Anything that React can render
+    children: PropTypes.node.isRequired,
   };
 
   return (

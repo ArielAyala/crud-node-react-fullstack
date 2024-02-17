@@ -42,3 +42,18 @@ export const updatePersona = async (id, personaData) => {
     throw error;
   }
 };
+
+export const deletePersona = async (id) => {
+  try {
+    const response = await axios.delete(URL_ENTITY + id);
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Error deleting persona: " + response.statusText);
+    }
+  } catch (error) {
+    console.error("Error deleting persona:", error);
+    throw error;
+  }
+};

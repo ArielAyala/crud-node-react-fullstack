@@ -3,10 +3,11 @@ import {
   getAllPersonas,
   createPersona,
   updatePersona,
+  deletePersona,
 } from "../api/persona.service";
 import { Modal, Button } from "react-bootstrap";
 import { Operation } from "../utils/operations";
-import { showAlert, ALERT_ICON } from "../utils/alert";
+import { showAlert, ALERT_ICON, showConfirDeleteDialog } from "../utils/alert";
 import { useForm } from "react-hook-form";
 
 const Persona = () => {
@@ -58,7 +59,7 @@ const Persona = () => {
       setNombre(nombreCompleto);
       setDocumento(documento);
       setTelefono(telefono);
-      setCorreo(correo ?? '');
+      setCorreo(correo ?? "");
 
       window.setTimeout(() => {
         document.getElementById("nombre").focus();
@@ -92,6 +93,21 @@ const Persona = () => {
       }
     } catch (error) {
       showAlert("Hubo un error", ALERT_ICON.Error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = await showConfirDeleteDialog(
+      "¿Está seguro de eliminar esta persona?"
+    );
+    if (confirmDelete.isConfirmed) {
+      try {
+        await deletePersona(id);
+        showAlert("Persona eliminada correctamente", ALERT_ICON.Success);
+        getPersonas();
+      } catch (error) {
+        showAlert("Hubo un error al eliminar la persona", ALERT_ICON.Error);
+      }
     }
   };
 
@@ -145,7 +161,10 @@ const Persona = () => {
                     <i className="fa-solid fa-edit"></i>
                   </button>
                   &nbsp;
-                  <button className="btn btn-danger">
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(persona.id)}
+                  >
                     <i className="fa-solid fa-trash"></i>
                   </button>
                 </td>
