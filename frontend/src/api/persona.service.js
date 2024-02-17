@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_URL } from "../config";
 
-const URL_ENTITY = API_URL + "personas/";
+const URL_ENTITY = API_URL + "persona/";
 
 export const getAllPersonas = async () => {
   const response = await axios.get(URL_ENTITY);

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_URL } from "../config";
 
-const URL_ENTITY = API_URL + "habitaciones/";
+const URL_ENTITY = API_URL + "habitacion/";
 
 export const getAllHabitaciones = async () => {
   const response = await axios.get(URL_ENTITY);

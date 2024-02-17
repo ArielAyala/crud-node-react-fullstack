@@ -10,12 +10,12 @@ import {
 
 const router = Router();
 
-router.get("/habitaciones/:id", geHabitacionById);
-router.get("/habitaciones", getHabitaciones);
+router.get("/habitacion/:id", geHabitacionById);
+router.get("/habitacion", getHabitaciones);
 // prettier-ignore
-router.get("/habitaciones/habitaciones-disponibles/:fechaEntrada/:fechaSalida",getHabitacionesDisponiblesByDateRange);
-router.post("/habitaciones", createHabitacion);
-router.patch("/habitaciones/:id", updateHabitacion);
-router.delete("/habitaciones/:id", deleteHabitacion);
+router.get("/habitacion/habitaciones-disponibles/:fechaEntrada/:fechaSalida",getHabitacionesDisponiblesByDateRange);
+router.post("/habitacion", createHabitacion);
+router.patch("/habitacion/:id", updateHabitacion);
+router.delete("/habitacion/:id", deleteHabitacion);
 
 export default router;
