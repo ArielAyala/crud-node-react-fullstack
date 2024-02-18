@@ -5,3 +5,5 @@ export const LIMITES_RESERVA = {
     MaxCamas : 4,
 };
 
+export const PRICE_DAY = 120000;
+
