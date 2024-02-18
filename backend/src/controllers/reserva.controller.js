@@ -36,6 +36,21 @@ export const createReseva = async (req, res) => {
   }
 };
 
+export const updateReserva = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reserva = await reservaService.updateReserva(id, req.body);
+
+    if (!reserva) {
+      return res.status(404).json({ message: "Reserva no encontrada" });
+    }
+
+    res.json(reserva);
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
 export const deleteReserva = async (req, res) => {
   try {
     const { id } = req.params;
