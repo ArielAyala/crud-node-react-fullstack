@@ -282,7 +282,11 @@ const Habitacion = () => {
                 className="form-control"
                 id="cantCamas"
                 value={cantCamas}
-                onChange={(e) => setCantCamas(e.target.value === "" ? "" : parseInt(e.target.value, 10))}
+                onChange={(e) =>
+                  setCantCamas(
+                    e.target.value === "" ? "" : parseInt(e.target.value, 10)
+                  )
+                }
                 required
                 min={1}
                 max={4}
