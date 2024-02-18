@@ -134,7 +134,7 @@ class HabitacionService {
   }
 
   async isHabitacionDisponible(habitacionId, fechaEntrada, fechaSalida) {
-    const query = `SELECT 1
+    const query = `SELECT COUNT(*) AS rowCount 
                     FROM reserva r
                     WHERE r.habitacionid = ?
                       AND (
@@ -146,9 +146,9 @@ class HabitacionService {
                     LIMIT 1;`;
 
     // prettier-ignore
-    const result = await pool.query(query, [habitacionId,fechaEntrada,fechaSalida,fechaEntrada,fechaSalida,fechaEntrada,fechaSalida]);
-
-    return result.length === 0;
+    const result = await pool.query(query, [habitacionId, fechaEntrada, fechaSalida, fechaEntrada, fechaSalida, fechaEntrada, fechaSalida]);
+    const rowCount = result[0][0].rowCount;
+    return rowCount === 0;
   }
 }
 
