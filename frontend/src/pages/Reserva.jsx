@@ -5,7 +5,10 @@ import {
   updateReserva,
   deleteReserva,
 } from "../api/reserva.service";
-import { getHabitacionesDisponiblesByDateRange } from "../api/habitacion.service";
+import {
+  getAllHabitaciones,
+  getHabitacionesDisponiblesByDateRange,
+} from "../api/habitacion.service";
 import { getAllPersonas } from "../api/persona.service";
 import { Operation } from "../utils/operations";
 import { showAlert, ALERT_ICON, showConfirDeleteDialog } from "../utils/alert";
@@ -50,7 +53,9 @@ const Reserva = () => {
 
   useEffect(() => {
     if (fechaEntrada && fechaSalida) {
-      getHabitaciones();
+      if (operationModal === Operation.CREATE) {
+        getHabitacionesDisponibles();
+      }
       calcularMontoReserva();
     }
   }, [fechaEntrada, fechaSalida]);
@@ -66,7 +71,16 @@ const Reserva = () => {
       });
   };
 
-  const getHabitaciones = () => {
+  const getHabitaciones = async () => {
+    try {
+      const response = await getAllHabitaciones();
+      setHabitaciones(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getHabitacionesDisponibles = () => {
     getHabitacionesDisponiblesByDateRange(fechaEntrada, fechaSalida)
       .then((response) => {
         setHabitaciones(response);
@@ -88,7 +102,7 @@ const Reserva = () => {
 
   const closeModal = () => setShow(false);
 
-  const openModal = (
+  const openModal = async (
     op,
     id,
     fechaReserva,
@@ -115,8 +129,10 @@ const Reserva = () => {
       setModalTitle("Editar reserva");
       setId(id);
       setFechaReserva(fechaReserva);
-      setFechaEntrada(new Date(fechaEntrada));
-      setFechaSalida(fechaSalida);
+      setFechaEntrada(new Date(fechaEntrada).toISOString().split("T")[0]);
+      setFechaSalida(new Date(fechaSalida).toISOString().split("T")[0]);
+
+      await getHabitaciones();
       setHabitacionId(habitacionId);
       setPersonaId(personaId);
       setMontoReserva(montoReserva);
