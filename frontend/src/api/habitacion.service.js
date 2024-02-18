@@ -8,6 +8,16 @@ export const getAllHabitaciones = async () => {
   return response.data;
 };
 
+export const getHabitacionesDisponiblesByDateRange = async (
+  fechaEntrada,
+  fechaSalida
+) => {
+  const response = await axios.get(
+    `${URL_ENTITY}habitaciones-disponibles/${fechaEntrada}/${fechaSalida}`
+  );
+  return response.data;
+};
+
 export const getHabitacionById = async (id) => {
   const response = await axios.get(URL_ENTITY + id);
   return response.data;
