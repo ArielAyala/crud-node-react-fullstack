@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { Modal, Button } from "react-bootstrap";
 import DeleteButton from "../components/DeleteButton";
 import EditButton from "../components/EditButton";
+import { LIMITES_RESERVA } from "../config";
 
 const Habitacion = () => {
   const [habitaciones, setHabitaciones] = useState([]);
@@ -131,7 +132,7 @@ const Habitacion = () => {
   return (
     <>
       <div>
-        <div className="row justify-content-between mb-4">
+        <div className="row justify-content-between mb-4 mt-4">
           <div className="col">
             <h3>Habitaciones</h3>
           </div>
@@ -198,13 +199,23 @@ const Habitacion = () => {
               <input
                 {...register("habitacionPiso", {
                   required: "El piso es requerido",
+                  validate: {
+                    greaterThanZero: (value) =>
+                      parseInt(value, 10) > 0 || "El piso debe ser mayor a 0",
+                    lessThanOrEqual: (value) =>
+                      parseInt(value, 10) <= LIMITES_RESERVA.MaxPisos ||
+                      "El piso debe ser menor o igual a " +
+                        LIMITES_RESERVA.MaxPisos,
+                  },
                 })}
                 type="number"
                 className="form-control"
                 id="habitacionPiso"
                 value={habitacionPiso}
                 onChange={(e) =>
-                  setHabitacionPiso(parseInt(e.target.value, 10))
+                  setHabitacionPiso(
+                    e.target.value === "" ? "" : parseInt(e.target.value, 10)
+                  )
                 }
                 required
                 min={1}
@@ -223,12 +234,24 @@ const Habitacion = () => {
               <input
                 {...register("habitacionNro", {
                   required: "El número de habitación es requerido",
+                  validate: {
+                    greaterThanZero: (value) =>
+                      parseInt(value, 10) > 0 ||
+                      "El número de habitación debe ser mayor a 0",
+                    lessThanOrEqual: (value) =>
+                      parseInt(value, 10) <= LIMITES_RESERVA.MaxHabitaciones ||
+                      `El número de habitación debe ser menor o igual a ${LIMITES_RESERVA.MaxHabitaciones}`,
+                  },
                 })}
                 type="number"
                 className="form-control"
                 id="habitacionNro"
                 value={habitacionNro}
-                onChange={(e) => setHabitacionNro(parseInt(e.target.value, 10))}
+                onChange={(e) =>
+                  setHabitacionNro(
+                    e.target.value === "" ? "" : parseInt(e.target.value, 10)
+                  )
+                }
                 required
                 min={1}
                 max={20}
@@ -246,12 +269,20 @@ const Habitacion = () => {
               <input
                 {...register("cantCamas", {
                   required: "La cantidad de camas es requerida",
+                  validate: {
+                    greaterThanZero: (value) =>
+                      parseInt(value, 10) > 0 ||
+                      "La cantidad de camas debe ser mayor a 0",
+                    lessThanOrEqual: (value) =>
+                      parseInt(value, 10) <= LIMITES_RESERVA.MaxCamas ||
+                      `La cantidad de camas debe ser menor o igual a ${LIMITES_RESERVA.MaxCamas}`,
+                  },
                 })}
                 type="number"
                 className="form-control"
                 id="cantCamas"
                 value={cantCamas}
-                onChange={(e) => setCantCamas(parseInt(e.target.value, 10))}
+                onChange={(e) => setCantCamas(e.target.value === "" ? "" : parseInt(e.target.value, 10))}
                 required
                 min={1}
                 max={4}
