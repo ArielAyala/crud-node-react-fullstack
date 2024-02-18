@@ -103,7 +103,7 @@ const Reserva = () => {
     setOperationModal(op);
 
     if (op === Operation.CREATE) {
-      setModalTitle("Registrar reserva");
+      setModalTitle("Registrar nueva reserva");
       setId("");
       setFechaReserva("");
       setFechaEntrada("");
