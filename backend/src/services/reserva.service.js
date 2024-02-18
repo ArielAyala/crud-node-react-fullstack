@@ -78,6 +78,55 @@ class ReservaService {
     };
   }
 
+  async updateReserva(id, reserva) {
+    console.log("reserva update", reserva);
+    const schema = Joi.object({
+      fechaEntrada: Joi.date().min(new Date()).required(),
+      fechaSalida: Joi.date().greater(Joi.ref("fechaEntrada")),
+      personaId: Joi.number().required(),
+      habitacionId: Joi.number().required(),
+    });
+
+    const { error } = schema.validate(reserva);
+
+    if (error) {
+      throw boom.badRequest(error.details[0].message);
+    }
+
+    const reservaCurrentDB = await this.getReservaById(id);
+    console.log("reserva reservaCurrentDB", reservaCurrentDB);
+    if (reservaCurrentDB.habitacionid != reserva.habitacionId) {
+      // prettier-ignore
+      const isHabitacionAvailable = await habitacionService.isHabitacionDisponible(reserva.habitacionId,reserva.fechaEntrada,reserva.fechaSalida);
+      if (!isHabitacionAvailable) {
+        throw boom.badRequest("Habitación no disponible");
+      }
+    }
+
+
+    // prettier-ignore
+    reserva.montoReserva = this.calculateMontoReserva(reserva.fechaEntrada,reserva.fechaSalida);
+
+    // prettier-ignore
+    const { fechaEntrada, fechaSalida, habitacionId, personaId, montoReserva } = reserva;
+    // prettier-ignore
+    const [result] = await pool.query(`update reserva set fechaentrada = ?, fechasalida = ?, habitacionid = ?, personaid = ?, montoreserva = ? 
+    where id = ? ;`, [fechaEntrada, fechaSalida, habitacionId, personaId, montoReserva, id])
+
+    if (result.affectedRows <= 0) {
+      return null;
+    }
+
+    return {
+      id,
+      fechaEntrada,
+      fechaSalida,
+      habitacionId,
+      personaId,
+      montoReserva,
+    };
+  }
+
   calculateMontoReserva(fechaEntrada, fechaSalida) {
     const days = differenceInDays(fechaSalida, fechaEntrada);
     return days * PRICE_PER_DAY;
