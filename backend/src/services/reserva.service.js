@@ -60,7 +60,7 @@ class ReservaService {
     }
 
     // prettier-ignore
-    reserva.montoReserva = this.calcularDiferenciaEnDiasConDateFns(reserva.fechaEntrada,reserva.fechaSalida);
+    reserva.montoReserva = this.calculateMontoReserva(reserva.fechaEntrada,reserva.fechaSalida);
 
     // prettier-ignore
     const { fechaEntrada, fechaSalida, habitacionId, personaId, montoReserva } = reserva;
@@ -78,7 +78,7 @@ class ReservaService {
     };
   }
 
-  calcularDiferenciaEnDiasConDateFns(fechaEntrada, fechaSalida) {
+  calculateMontoReserva(fechaEntrada, fechaSalida) {
     const days = differenceInDays(fechaSalida, fechaEntrada);
     return days * PRICE_PER_DAY;
   }
