@@ -4,24 +4,23 @@ import { differenceInDays } from "date-fns";
 
 import { pool } from "../db.js";
 import habitacionService from "./habitacion.service.js";
+import { PRICE_PER_DAY } from "../config.js";
 
-const SELECT_RESERVAS_BASE = `select r.id,
-                                      r.fechareserva,
-                                      r.fechaentrada,
-                                      r.fechasalida,
-                                      r.personaid,
-                                      p.nombrecompleto,
-                                      r.habitacionid, 
-                                      h.habitacionnro,
-                                      r.montoreserva
-                                          
+const SELECT_RESERVAS_BASE = `select    r.id,
+                                        r.fechareserva,
+                                        r.fechaentrada,
+                                        r.fechasalida,
+                                        r.personaid,
+                                        p.nombrecompleto,
+                                        r.habitacionid, 
+                                        h.habitacionnro,
+                                        h.habitacionpiso,
+                                        r.montoreserva
                                       from mydb.reserva r
                                       inner join mydb.persona p 
-                                      on r.personaid = p.id 
+                                        on r.personaid = p.id 
                                       inner join mydb.habitacion h 
-                                      on  r.habitacionid = h.id `;
-
-const PRICE_PER_DAY = 120000;
+                                        on  r.habitacionid = h.id `;
 
 class ReservaService {
   async getReservas() {
@@ -45,7 +44,7 @@ class ReservaService {
       fechaEntrada: Joi.date().min(new Date()).required(),
       fechaSalida: Joi.date().greater(Joi.ref("fechaEntrada")),
       personaId: Joi.number().required(),
-      habitacionid: Joi.number().required(),
+      habitacionId: Joi.number().required(),
     });
 
     const { error } = schema.validate(reserva);
@@ -55,9 +54,7 @@ class ReservaService {
     }
 
     // prettier-ignore
-    const isHabitacionAvailable = await habitacionService.isHabitacionDisponible(reserva.habitacionid,reserva.fechaEntrada,reserva.fechaSalida);
-
-    console.log("isHabitacionAvailable", isHabitacionAvailable);
+    const isHabitacionAvailable = await habitacionService.isHabitacionDisponible(reserva.habitacionId,reserva.fechaEntrada,reserva.fechaSalida);
     if (!isHabitacionAvailable) {
       throw boom.badRequest("Habitación no disponible");
     }
