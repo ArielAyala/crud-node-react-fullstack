@@ -19,9 +19,7 @@ export const createReserva = async (reserva) => {
     if (response.status === 201) {
       return response.data;
     } else {
-      throw new Error(
-        "Error creating reserva: " + response.statusText.response.data.message
-      );
+      throw new Error("Error creating reserva: " + response.statusText);
     }
   } catch (error) {
     console.error("Error creating reserva:", error);
