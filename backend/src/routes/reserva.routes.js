@@ -4,7 +4,8 @@ import {
   getReservaById,
   getReservas,
   createReseva,
-  deleteReserva
+  deleteReserva,
+  updateReserva
 } from "../controllers/reserva.controller.js";
 
 const router = Router();
@@ -12,6 +13,7 @@ const router = Router();
 router.get("/reserva/:id", getReservaById);
 router.get("/reserva", getReservas);
 router.post("/reserva", createReseva);
+router.patch("/reserva/:id", updateReserva);
 router.delete("/reserva/:id", deleteReserva);
 
 export default router;
