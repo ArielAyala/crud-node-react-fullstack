@@ -153,7 +153,6 @@ const Reserva = () => {
       }
     } catch (error) {
       let errorMessage = "Hubo un error";
-      console.log("mensaje de error", error);
       if (
         error.response &&
         error.response.data &&
@@ -405,7 +404,9 @@ const Reserva = () => {
               </select>
             </div>
             <div className="form-group mb-3">
-              <label htmlFor="montoReserva">Monto Reserva: <b>{formatCurrency(montoReserva)}</b></label>
+              <label htmlFor="montoReserva">
+                Monto Reserva: <b>{formatCurrency(montoReserva)}</b>
+              </label>
             </div>
           </form>
         </Modal.Body>
