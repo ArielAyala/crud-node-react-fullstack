@@ -62,7 +62,20 @@ class ReservaService {
     // prettier-ignore
     reserva.montoReserva = this.calcularDiferenciaEnDiasConDateFns(reserva.fechaEntrada,reserva.fechaSalida);
 
-    return reserva;
+    // prettier-ignore
+    const { fechaEntrada, fechaSalida, habitacionId, personaId, montoReserva } = reserva;
+    // prettier-ignore
+    const [result] = await pool.query(`INSERT INTO reserva (fechareserva,fechaentrada,fechasalida,habitacionid,personaid,montoreserva) 
+                                        VALUES(now(),?,?,?,?,?);`, [fechaEntrada, fechaSalida, habitacionId, personaId, montoReserva]);
+
+    return {
+      id: result.insertId,
+      fechaEntrada,
+      fechaSalida,
+      habitacionId,
+      personaId,
+      montoReserva,
+    };
   }
 
   calcularDiferenciaEnDiasConDateFns(fechaEntrada, fechaSalida) {
