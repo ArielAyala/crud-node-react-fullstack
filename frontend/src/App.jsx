@@ -16,7 +16,7 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/crud-node-react-fullstack">
       <Layout>
         <AppRoutes />
       </Layout>
