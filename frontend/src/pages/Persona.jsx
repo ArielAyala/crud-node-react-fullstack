@@ -14,6 +14,7 @@ import DeleteButton from "../components/DeleteButton";
 import Loading from "../components/Loading";
 
 const Persona = () => {
+  
   const [personas, setPersonas] = useState([]);
   const [show, setShow] = useState(false);
   const [operationModal, setOperationModal] = useState(1);
