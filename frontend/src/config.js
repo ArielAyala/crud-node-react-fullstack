@@ -1,4 +1,4 @@
-export const API_URL = "crud-node-react-fullstack-production.up.railway.app/api/";
+export const API_URL = "https://crud-node-react-fullstack-production.up.railway.app/api/";
 export const LIMITES_RESERVA = {
     MaxPisos : 10,
     MaxHabitaciones : 20,
