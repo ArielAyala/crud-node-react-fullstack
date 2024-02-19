@@ -11,6 +11,7 @@ import { showAlert, ALERT_ICON, showConfirDeleteDialog } from "../utils/alert";
 import { useForm } from "react-hook-form";
 import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
+import Loading from "../components/Loading";
 
 const Persona = () => {
   const [personas, setPersonas] = useState([]);
@@ -24,6 +25,9 @@ const Persona = () => {
   const [telefono, setTelefono] = useState("");
   const [correo, setCorreo] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+
   // prettier-ignore
   const {register, handleSubmit, formState: { errors }, reset} = useForm();
 
@@ -32,13 +36,15 @@ const Persona = () => {
   }, []);
 
   const getPersonas = () => {
+    setLoading(true);
     getAllPersonas()
       .then((response) => {
         setPersonas(response);
       })
       .catch((error) => {
         console.error(error);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const closeModal = () => setShow(false);
@@ -70,6 +76,7 @@ const Persona = () => {
   };
 
   const onSubmit = async () => {
+    setSending(true);
     const personaBody = {
       nombre: nombre.trim(),
       documento: documento.trim(),
@@ -95,6 +102,8 @@ const Persona = () => {
       }
     } catch (error) {
       showAlert("Hubo un error", ALERT_ICON.Error);
+    } finally {
+      setSending(false);
     }
   };
 
@@ -116,7 +125,7 @@ const Persona = () => {
   return (
     <>
       <div>
-        <div className="row justify-content-between">
+        <div className="row justify-content-between mt-4">
           <div className="col">
             <h3>Personas</h3>
           </div>
@@ -129,43 +138,47 @@ const Persona = () => {
             </Button>
           </div>
         </div>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Documento</th>
-              <th scope="col">Teléfono</th>
-              <th scope="col">Correo</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {personas.map((persona, i) => (
-              <tr key={i}>
-                <td>{persona.nombrecompleto}</td>
-                <td>{persona.nrodocumento}</td>
-                <td>{persona.telefono}</td>
-                <td>{persona.correo}</td>
-                <td>
-                  <EditButton
-                    onClick={() =>
-                      openModal(
-                        Operation.EDIT,
-                        persona.id,
-                        persona.nombrecompleto,
-                        persona.nrodocumento,
-                        persona.telefono,
-                        persona.correo
-                      )
-                    }
-                  />
-                  &nbsp;
-                  <DeleteButton onClick={() => handleDelete(persona.id)} />
-                </td>
+        {loading ? (
+          <Loading />
+        ) : (
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Correo</th>
+                <th scope="col"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {personas.map((persona, i) => (
+                <tr key={i}>
+                  <td>{persona.nombrecompleto}</td>
+                  <td>{persona.nrodocumento}</td>
+                  <td>{persona.telefono}</td>
+                  <td>{persona.correo}</td>
+                  <td>
+                    <EditButton
+                      onClick={() =>
+                        openModal(
+                          Operation.EDIT,
+                          persona.id,
+                          persona.nombrecompleto,
+                          persona.nrodocumento,
+                          persona.telefono,
+                          persona.correo
+                        )
+                      }
+                    />
+                    &nbsp;
+                    <DeleteButton onClick={() => handleDelete(persona.id)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <Modal show={show} onHide={closeModal}>
@@ -248,8 +261,12 @@ const Persona = () => {
           <Button variant="secondary" onClick={closeModal}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleSubmit(onSubmit)}>
-            Guardar
+          <Button
+            variant="primary"
+            onClick={handleSubmit(onSubmit)}
+            disabled={sending}
+          >
+            {sending ? "Guardando" : "Guardar"}
           </Button>
         </Modal.Footer>
       </Modal>

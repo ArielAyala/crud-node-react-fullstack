@@ -12,6 +12,7 @@ import { Modal, Button } from "react-bootstrap";
 import DeleteButton from "../components/DeleteButton";
 import EditButton from "../components/EditButton";
 import { LIMITES_RESERVA } from "../config";
+import Loading from "../components/Loading";
 
 const Habitacion = () => {
   const [habitaciones, setHabitaciones] = useState([]);
@@ -26,6 +27,9 @@ const Habitacion = () => {
   const [tieneTelevision, setTieneTelevision] = useState(false);
   const [tieneFrigobar, setTieneFrigobar] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+
   // prettier-ignore
   const {register, handleSubmit, formState: { errors }, reset} = useForm();
 
@@ -34,13 +38,15 @@ const Habitacion = () => {
   }, []);
 
   const getHabitaciones = () => {
+    setLoading(true);
     getAllHabitaciones()
       .then((response) => {
         setHabitaciones(response);
       })
       .catch((error) => {
         console.error(error);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const closeModal = () => setShow(false);
@@ -82,6 +88,7 @@ const Habitacion = () => {
   };
 
   const onSubmit = async () => {
+    setSending(true);
     const habitacionBody = {
       habitacionPiso,
       habitacionNro,
@@ -111,6 +118,8 @@ const Habitacion = () => {
       }
     } catch (error) {
       showAlert("Hubo un error", ALERT_ICON.Error);
+    } finally {
+      setSending(false);
     }
   };
 
@@ -145,46 +154,50 @@ const Habitacion = () => {
             </Button>
           </div>
         </div>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Piso</th>
-              <th scope="col">Número</th>
-              <th scope="col">Camas</th>
-              <th scope="col">Televisión</th>
-              <th scope="col">Frigobar</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {habitaciones.map((habitacion, i) => (
-              <tr key={i}>
-                <td>{habitacion.habitacionpiso}</td>
-                <td>{habitacion.habitacionnro}</td>
-                <td>{habitacion.cantcamas}</td>
-                <td>{habitacion.tienetelevision ? "Sí" : "No"}</td>
-                <td>{habitacion.tienefrigobar ? "Sí" : "No"}</td>
-                <td>
-                  <EditButton
-                    onClick={() =>
-                      openModal(
-                        Operation.EDIT,
-                        habitacion.id,
-                        habitacion.habitacionpiso,
-                        habitacion.habitacionnro,
-                        habitacion.cantcamas,
-                        habitacion.tienetelevision,
-                        habitacion.tienefrigobar
-                      )
-                    }
-                  />
-                  &nbsp;
-                  <DeleteButton onClick={() => handleDelete(habitacion.id)} />
-                </td>
+        {loading ? (
+          <Loading />
+        ) : (
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Piso</th>
+                <th scope="col">Número</th>
+                <th scope="col">Camas</th>
+                <th scope="col">Televisión</th>
+                <th scope="col">Frigobar</th>
+                <th scope="col"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {habitaciones.map((habitacion, i) => (
+                <tr key={i}>
+                  <td>{habitacion.habitacionpiso}</td>
+                  <td>{habitacion.habitacionnro}</td>
+                  <td>{habitacion.cantcamas}</td>
+                  <td>{habitacion.tienetelevision ? "Sí" : "No"}</td>
+                  <td>{habitacion.tienefrigobar ? "Sí" : "No"}</td>
+                  <td>
+                    <EditButton
+                      onClick={() =>
+                        openModal(
+                          Operation.EDIT,
+                          habitacion.id,
+                          habitacion.habitacionpiso,
+                          habitacion.habitacionnro,
+                          habitacion.cantcamas,
+                          habitacion.tienetelevision,
+                          habitacion.tienefrigobar
+                        )
+                      }
+                    />
+                    &nbsp;
+                    <DeleteButton onClick={() => handleDelete(habitacion.id)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <Modal show={show} onHide={closeModal}>
@@ -331,8 +344,12 @@ const Habitacion = () => {
           <Button variant="secondary" onClick={closeModal}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleSubmit(onSubmit)}>
-            Guardar
+          <Button
+            variant="primary"
+            onClick={handleSubmit(onSubmit)}
+            disabled={sending}
+          >
+            {sending ? "Guardando" : "Guardar"}
           </Button>
         </Modal.Footer>
       </Modal>

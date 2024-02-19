@@ -25,6 +25,7 @@ import {
 import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
 import { formatCurrency } from "../utils/formatNumber";
+import Loading from "../components/Loading";
 
 const Reserva = () => {
   const [reservas, setReservas] = useState([]);
@@ -42,6 +43,9 @@ const Reserva = () => {
   const [personaId, setPersonaId] = useState("");
 
   const [montoReserva, setMontoReserva] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [gettingHabitaciones, setGettingHabitaciones] = useState(false);
 
   // prettier-ignore
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -61,6 +65,7 @@ const Reserva = () => {
   }, [fechaEntrada, fechaSalida]);
 
   const getReservas = () => {
+    setLoading(true);
     getAllReservas()
       .then((response) => {
         setReservas(response);
@@ -68,7 +73,8 @@ const Reserva = () => {
       .catch((error) => {
         console.error(error);
         showAlert("Hubo un error al obtener las reservas", ALERT_ICON.Error);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const getHabitaciones = async () => {
@@ -81,13 +87,15 @@ const Reserva = () => {
   };
 
   const getHabitacionesDisponibles = () => {
+    setGettingHabitaciones(true);
     getHabitacionesDisponiblesByDateRange(fechaEntrada, fechaSalida)
       .then((response) => {
         setHabitaciones(response);
       })
       .catch((error) => {
         console.error(error);
-      });
+      })
+      .finally(() => setGettingHabitaciones(false));
   };
 
   const getPersonas = () => {
@@ -144,6 +152,7 @@ const Reserva = () => {
   };
 
   const onSubmit = async () => {
+    setSending(true);
     const reservaBody = {
       fechaEntrada: fechaEntrada,
       fechaSalida: fechaSalida,
@@ -177,6 +186,9 @@ const Reserva = () => {
         errorMessage = error.response.data.message;
       }
       showAlert(errorMessage, ALERT_ICON.Error);
+    }
+    finally {
+      setSending(false);
     }
   };
 
@@ -225,74 +237,78 @@ const Reserva = () => {
             </Button>
           </div>
         </div>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Persona</th>
-              <th scope="col">Habitación</th>
-              <th scope="col">Piso</th>
-              <th scope="col" className="text-center">
-                Fecha Reserva
-              </th>
-              <th scope="col" className="text-center">
-                Fecha Entrada
-              </th>
-              <th scope="col" className="text-center">
-                Fecha Salida
-              </th>
-              <th scope="col" className="text-end">
-                Monto Reserva
-              </th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservas.map((reserva, i) => (
-              <tr key={i}>
-                <td>{reserva.nombrecompleto}</td>
-                <td className="text-center">{reserva.habitacionnro}</td>
-                <td className="text-center">{reserva.habitacionpiso}</td>
-                <td className="text-center">
-                  {format(new Date(reserva.fechareserva), "dd-MM-yyyy HH:mm")}
-                </td>
-                <td className="text-center">
-                  {format(new Date(reserva.fechaentrada), "dd-MM-yyyy")}
-                </td>
-                <td className="text-center">
-                  {reserva.fechasalida
-                    ? format(new Date(reserva.fechasalida), "dd-MM-yyyy")
-                    : ""}
-                </td>
-                <td className="text-end">
-                  <div className="me-3">
-                    {formatCurrency(reserva.montoreserva)}
-                  </div>
-                </td>
-                <td>
-                  <EditButton
-                    variant="warning"
-                    onClick={() =>
-                      openModal(
-                        Operation.EDIT,
-                        reserva.id,
-                        reserva.fechareserva,
-                        reserva.fechaentrada,
-                        reserva.fechasalida,
-                        reserva.habitacionid,
-                        reserva.personaid,
-                        reserva.montoreserva
-                      )
-                    }
-                  />{" "}
-                  <DeleteButton
-                    variant="danger"
-                    onClick={() => handleDelete(reserva.id)}
-                  />
-                </td>
+        {loading ? (
+          <Loading />
+        ) : (
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Persona</th>
+                <th scope="col">Habitación</th>
+                <th scope="col">Piso</th>
+                <th scope="col" className="text-center">
+                  Fecha Reserva
+                </th>
+                <th scope="col" className="text-center">
+                  Fecha Entrada
+                </th>
+                <th scope="col" className="text-center">
+                  Fecha Salida
+                </th>
+                <th scope="col" className="text-end">
+                  Monto Reserva
+                </th>
+                <th scope="col"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reservas.map((reserva, i) => (
+                <tr key={i}>
+                  <td>{reserva.nombrecompleto}</td>
+                  <td className="text-center">{reserva.habitacionnro}</td>
+                  <td className="text-center">{reserva.habitacionpiso}</td>
+                  <td className="text-center">
+                    {format(new Date(reserva.fechareserva), "dd-MM-yyyy HH:mm")}
+                  </td>
+                  <td className="text-center">
+                    {format(new Date(reserva.fechaentrada), "dd-MM-yyyy")}
+                  </td>
+                  <td className="text-center">
+                    {reserva.fechasalida
+                      ? format(new Date(reserva.fechasalida), "dd-MM-yyyy")
+                      : ""}
+                  </td>
+                  <td className="text-end">
+                    <div className="me-3">
+                      {formatCurrency(reserva.montoreserva)}
+                    </div>
+                  </td>
+                  <td>
+                    <EditButton
+                      variant="warning"
+                      onClick={() =>
+                        openModal(
+                          Operation.EDIT,
+                          reserva.id,
+                          reserva.fechareserva,
+                          reserva.fechaentrada,
+                          reserva.fechasalida,
+                          reserva.habitacionid,
+                          reserva.personaid,
+                          reserva.montoreserva
+                        )
+                      }
+                    />{" "}
+                    <DeleteButton
+                      variant="danger"
+                      onClick={() => handleDelete(reserva.id)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <Modal show={show} onHide={closeModal}>
@@ -388,9 +404,9 @@ const Reserva = () => {
                 value={habitacionId}
                 onChange={(e) => setHabitacionId(e.target.value)}
                 required
-                disabled={fechaSalida === "" || fechaEntrada === ""}
+                disabled={(fechaSalida === "" || fechaEntrada === "") || gettingHabitaciones}
               >
-                <option value="">Seleccionar Habitación</option>
+                <option value="">{gettingHabitaciones ? 'Obteniendo habitaciones' : 'Seleccionar habitación'}</option>
                 {habitaciones.map((habitacion) => (
                   <option key={habitacion.id} value={habitacion.id}>
                     {habitacion.habitacionnro} - Piso{" "}
@@ -430,8 +446,12 @@ const Reserva = () => {
           <Button variant="secondary" onClick={closeModal}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleSubmit(onSubmit)}>
-            Guardar
+          <Button
+            variant="primary"
+            onClick={handleSubmit(onSubmit)}
+            disabled={sending}
+          >
+            {sending ? "Guardando" : "Guardar"}
           </Button>
         </Modal.Footer>
       </Modal>
