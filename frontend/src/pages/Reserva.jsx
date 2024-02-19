@@ -186,8 +186,7 @@ const Reserva = () => {
         errorMessage = error.response.data.message;
       }
       showAlert(errorMessage, ALERT_ICON.Error);
-    }
-    finally {
+    } finally {
       setSending(false);
     }
   };
@@ -316,6 +315,7 @@ const Reserva = () => {
           <Modal.Title>{modalTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <h3>{fechaEntrada}</h3>
           <form>
             <input type="hidden" id="id" value={id} />
             {operationModal === Operation.EDIT && (
@@ -338,9 +338,12 @@ const Reserva = () => {
                   required: "La fecha de entrada es requerida",
                   validate: (value) => {
                     const valor = addDays(value, 1);
-                    const days = differenceInDays(valor, new Date());
+                    const days = differenceInCalendarDays(
+                      startOfDay(valor),
+                      startOfDay(new Date())
+                    );
                     return (
-                      days >= 1 ||
+                      days > 0 ||
                       "La fecha de entrada debe ser al menos un día después de la fecha actual"
                     );
                   },
@@ -404,9 +407,17 @@ const Reserva = () => {
                 value={habitacionId}
                 onChange={(e) => setHabitacionId(e.target.value)}
                 required
-                disabled={(fechaSalida === "" || fechaEntrada === "") || gettingHabitaciones}
+                disabled={
+                  fechaSalida === "" ||
+                  fechaEntrada === "" ||
+                  gettingHabitaciones
+                }
               >
-                <option value="">{gettingHabitaciones ? 'Obteniendo habitaciones' : 'Seleccionar habitación'}</option>
+                <option value="">
+                  {gettingHabitaciones
+                    ? "Obteniendo habitaciones"
+                    : "Seleccionar habitación"}
+                </option>
                 {habitaciones.map((habitacion) => (
                   <option key={habitacion.id} value={habitacion.id}>
                     {habitacion.habitacionnro} - Piso{" "}
@@ -414,6 +425,13 @@ const Reserva = () => {
                   </option>
                 ))}
               </select>
+              <div
+                className={`invalid-feedback${
+                  errors.habitacionId ? " d-block" : ""
+                }`}
+              >
+                {errors.habitacionId?.message}
+              </div>
             </div>
             <div className="form-group mb-3">
               <label htmlFor="personaId">Persona</label>
@@ -434,6 +452,13 @@ const Reserva = () => {
                   </option>
                 ))}
               </select>
+              <div
+                className={`invalid-feedback${
+                  errors.personaId ? " d-block" : ""
+                }`}
+              >
+                {errors.personaId?.message}
+              </div>
             </div>
             <div className="form-group mb-3">
               <label htmlFor="montoReserva">
