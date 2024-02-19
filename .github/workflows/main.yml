@@ -31,6 +31,10 @@ jobs:
           node-version: 14
           cache: 'npm'
 
+      - name: Set up environment variables
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: npm install
 
@@ -53,7 +57,3 @@ jobs:
           target-folder: frontend/dist  # Adjust the target folder on GitHub Pages
           build-folder: frontend/dist  # Adjust the build folder to deploy
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up environment variables
-        run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> $GITHUB_ENV
