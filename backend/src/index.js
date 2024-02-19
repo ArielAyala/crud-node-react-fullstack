@@ -11,17 +11,16 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Reemplaza con el origen autorizado (puedes añadir más orígenes separándolos por comas)
-    credentials: true, // Indica si se permiten credenciales (cookies, sesiones)
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
-
 app.use("/api", personaRoutes);
 app.use("/api", habitacionRoutes);
-app.use("/api", reservaRoutes)
+app.use("/api", reservaRoutes);
 
 app.use((req, res) => {
   res.status(400).json({
