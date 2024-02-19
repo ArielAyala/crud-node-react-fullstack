@@ -30,11 +30,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Generate dependencies lock file
+        run: npm ci
+        working-directory: ./frontend
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
+          working-directory: ./frontend
       - name: Install dependencies
         run: npm install
         working-directory: ./frontend
