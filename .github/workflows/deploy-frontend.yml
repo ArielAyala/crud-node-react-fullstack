@@ -25,22 +25,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up environment variables
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> frontend/.env
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 14
           cache: 'npm'
-
-      - name: Set up environment variables
-        run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> frontend/.env
+        working-directory: frontend  # Cambio del directorio de trabajo a la subcarpeta frontend
 
       - name: Install dependencies
-        working-directory: frontend  # Cambio del directorio de trabajo a la subcarpeta frontend
         run: npm install
 
       - name: Build
-        working-directory: frontend  # Cambio del directorio de trabajo a la subcarpeta frontend
         run: npm run build
 
       - name: Set up Pages
