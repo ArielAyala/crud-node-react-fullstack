@@ -1,4 +1,4 @@
-name: Deploy Vite-React App
+name: Deploy static content to Pages
 
 on:
   push:
@@ -20,43 +20,27 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up environment variables
-        run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> frontend/.env
-      
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
-
       - name: Install dependencies
+        run: npm install
+      - name: Set up environment variables
         run: |
-          cd frontend
-          npm install
-
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env.production
       - name: Build
-        run: |
-          npm run build
-
-      - name: Set up Pages
+        run: npm run build
+      - name: Setup Pages
         uses: actions/configure-pages@v3
-
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: dist
-          path: frontend/dist  # Ajustar la ruta a tu directorio de salida de construcción
-
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        with:
-          target-folder: frontend/dist  # Ajustar la carpeta de destino en GitHub Pages
-          build-folder: frontend/dist  # Ajustar la carpeta de construcción para implementar
-          token: ${{ secrets.GITHUB_TOKEN }}
