@@ -33,12 +33,14 @@ jobs:
 
       - name: Set up environment variables
         run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> $GITHUB_ENV
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> frontend/.env
 
       - name: Install dependencies
+        working-directory: frontend  # Cambio del directorio de trabajo a la subcarpeta frontend
         run: npm install
 
       - name: Build
+        working-directory: frontend  # Cambio del directorio de trabajo a la subcarpeta frontend
         run: npm run build
 
       - name: Set up Pages
@@ -48,12 +50,12 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: frontend/dist  # Adjust the path to your build output directory
+          path: frontend/dist  # Ajustar la ruta a tu directorio de salida de construcción
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
         with:
-          target-folder: frontend/dist  # Adjust the target folder on GitHub Pages
-          build-folder: frontend/dist  # Adjust the build folder to deploy
+          target-folder: frontend/dist  # Ajustar la carpeta de destino en GitHub Pages
+          build-folder: frontend/dist  # Ajustar la carpeta de construcción para implementar
           token: ${{ secrets.GITHUB_TOKEN }}
